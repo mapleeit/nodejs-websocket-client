@@ -1,22 +1,16 @@
 #!/usr/bin/env node
 const WebSocketClient = require('websocket').client;
-const protobuf = require("protobufjs");
 
 // *** 1. Create the actual message(buffer) that was transferred *** 
-const root = protobuf.loadSync('./proto/jina.proto');
-const DataRequest = root.lookupType('jina.DataRequestProto');
-
-const request = DataRequest.create({
+const request = {
+    execEndpoint: '/foo',
     data: {
-        docs: {
-            docs: [{
-                text: 'hello'
-            }]
-        }
+        docs: [{
+            text: 'hello'
+        }]
     }
-})
+}
 
-const requestBuffer = DataRequest.encode(request).finish()
 
 // *** 2. Create Websocket Client *** 
 const client = new WebSocketClient();
@@ -37,16 +31,11 @@ client.on('connect', function(connection) {
         if (message.type === 'utf8') {
             console.log("Received: '" + message.utf8Data + "'");
         }
-
-        if (message.type === 'binary') {
-            const response = DataRequest.decode(message.binaryData);
-            console.log(JSON.stringify(DataRequest.toObject(response), null, 2))
-        }
     });
 
     function sendMessage() {
         if (connection.connected) {
-            connection.send(requestBuffer)
+            connection.send(JSON.stringify(request))
         }
     }
     // *** 3. Send the actual message *** 
