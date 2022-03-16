@@ -2,7 +2,7 @@
 const WebSocketClient = require('websocket').client;
 const protobuf = require("protobufjs");
 
-const root = protobuf.loadSync('./jina.proto');
+const root = protobuf.loadSync('./proto/jina.proto');
 const DataRequest = root.lookupType('jina.DataRequestProto');
 
 const request = DataRequest.create({
