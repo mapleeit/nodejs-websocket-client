@@ -2,6 +2,7 @@
 const WebSocketClient = require('websocket').client;
 const protobuf = require("protobufjs");
 
+// *** 1. Create the actual message(buffer) that was transferred *** 
 const root = protobuf.loadSync('./proto/jina.proto');
 const DataRequest = root.lookupType('jina.DataRequestProto');
 
@@ -17,6 +18,7 @@ const request = DataRequest.create({
 
 const requestBuffer = DataRequest.encode(request).finish()
 
+// *** 2. Create Websocket Client *** 
 const client = new WebSocketClient();
 
 client.on('connectFailed', function(error) {
@@ -42,12 +44,13 @@ client.on('connect', function(connection) {
         }
     });
 
-    function sendNumber() {
+    function sendMessage() {
         if (connection.connected) {
             connection.send(requestBuffer)
         }
     }
-    sendNumber();
+    // *** 3. Send the actual message *** 
+    sendMessage();
 });
 
 client.connect('ws://localhost:12345/');
