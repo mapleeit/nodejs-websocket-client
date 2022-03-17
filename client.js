@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 const WebSocketClient = require('websocket').client;
 
-// *** 1. Create the actual message(buffer) that was transferred *** 
+// *** 1. Create the actual message that will be transferred *** 
 const request = {
     execEndpoint: '/foo',
     data: {
@@ -16,7 +16,7 @@ const request = {
 const client = new WebSocketClient();
 
 client.on('connectFailed', function(error) {
-    console.log('Connect Error: ' + error.toString());
+    console.error('Connect Failed: ' + error.toString());
 });
 
 client.on('connect', function(connection) {
@@ -25,7 +25,7 @@ client.on('connect', function(connection) {
         console.log("Connection Error: " + error.toString());
     });
     connection.on('close', function() {
-        console.log('echo-protocol Connection Closed');
+        console.log('Connection Closed');
     });
     connection.on('message', function(message) {
         if (message.type === 'utf8') {
